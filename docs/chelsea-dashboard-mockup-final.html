@@ -1,0 +1,165 @@
+<!--
+  AMW-SPORTS-HQ - Chelsea Dashboard - FINAL SPEC (Lane B "Broadcast Lite")
+  Build target for components/ChelseaDashboard.tsx.
+  Identity (fixed, from existing app): bg #0f0f0f, Chelsea blue #034694,
+  accent #2a7de1, tracked-uppercase labels, Geist type (system stack here).
+  Surfaces: #131316 / #17171c / #1d1d24. Hairline border rgba(255,255,255,.08).
+  Form colours: W #22a05a / D #6f6f7a / L #cf4a45.
+  B treatments: faint crest watermark behind hero, soft radial blue glow,
+  boxed tabular countdown (render in Melbourne time), form as W/D/L chips,
+  table position arrows, cards lift on hover.
+  Crest = placeholder roundel -> swap /logos/chelsea.svg. Sample data only.
+  Mobile-first 390px; desktop reflows to 2-col grid via container query.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#0f0f0f;--ink:#f4f4f5;--blue:#034694;--blue-bright:#2a7de1;
+    --s1:#131316;--s2:#17171c;--s3:#1d1d24;
+    --line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.13);
+    --muted:rgba(255,255,255,.46);--faint:rgba(255,255,255,.26);
+    --win:#22a05a;--draw:#6f6f7a;--loss:#cf4a45;
+    --font:-apple-system,"Segoe UI",system-ui,Inter,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:#0a0a0b;color:var(--ink);line-height:1.45;padding:28px 16px 60px;-webkit-font-smoothing:antialiased}
+  .intro{max-width:1320px;margin:0 auto 22px}
+  .intro h1{font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .intro p{font-size:14px;color:var(--faint);margin-top:8px;max-width:64ch}
+  .devices{display:flex;flex-wrap:wrap;gap:34px;align-items:flex-start;max-width:1320px;margin:0 auto}
+  .vp{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:9px;font-weight:600}
+
+  .phone{width:360px;max-width:92vw;height:760px;border-radius:40px;background:var(--bg);position:relative;overflow:hidden;
+    border:1px solid rgba(255,255,255,.09);box-shadow:0 26px 70px -22px rgba(0,0,0,.85),0 0 0 10px #050506,0 0 0 11px rgba(255,255,255,.05)}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:118px;height:24px;background:#050506;border-radius:0 0 16px 16px;z-index:40}
+  .desk{width:912px;max-width:96vw;height:660px;border-radius:14px;background:var(--bg);position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.1);box-shadow:0 26px 70px -26px rgba(0,0,0,.85)}
+  .winbar{height:34px;display:flex;align-items:center;gap:7px;padding:0 14px;background:#0b0b0d;border-bottom:1px solid var(--line);position:relative;z-index:40}
+  .winbar i{width:10px;height:10px;border-radius:50%;background:#2a2a30;display:block}
+  .winbar span{margin-left:12px;font-size:11px;color:var(--faint);background:#141417;border-radius:6px;padding:3px 12px}
+  .screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;container-type:inline-size}
+  .desk .screen{top:34px}.screen::-webkit-scrollbar{display:none}
+
+  .board{display:flex;flex-direction:column;gap:18px;padding:0 16px 24px}
+  .s-bar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:10px;margin:0 -16px;padding:15px 16px 11px;background:linear-gradient(var(--bg),rgba(15,15,15,.85) 70%,transparent);backdrop-filter:blur(7px)}
+  .chev{color:var(--muted);font-size:18px}
+  .wordmark{font-size:13px;letter-spacing:.26em;text-transform:uppercase;font-weight:700}
+  .sample{margin-left:auto;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);border:1px solid var(--line);border-radius:5px;padding:3px 6px}
+  .eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .eyebrow::before{content:"";width:14px;height:2px;background:var(--blue-bright);border-radius:2px}
+  .s-bar .eyebrow::before{content:none}
+  .panel{background:var(--s1);border:1px solid var(--line);border-radius:14px;transition:transform .18s ease,border-color .18s ease}
+  .panel:hover{transform:translateY(-2px);border-color:rgba(42,125,225,.4)}
+
+  .hero{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line2);padding:18px;
+    background:radial-gradient(120% 90% at 50% -10%,rgba(3,70,148,.4),transparent 60%),var(--s1)}
+  .wm{position:absolute;right:-22px;top:-18px;width:150px;height:168px;opacity:.06;z-index:0}
+  .hero>*{position:relative;z-index:2}
+  .hrow{display:flex;justify-content:space-between;align-items:center}
+  .comp{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .vs{display:flex;align-items:center;gap:14px;margin:14px 0 6px}
+  .team{display:flex;flex-direction:column;align-items:center;gap:7px;flex:1;text-align:center}
+  .team span:last-child{font-size:13px;font-weight:600}
+  .crest{display:grid;place-items:center;border-radius:50%;background:var(--s3);border:1px solid var(--line2);color:rgba(255,255,255,.72);font-weight:800;flex:none}
+  .crest.big{width:46px;height:46px;font-size:14px}
+  .mid .vstxt{font-size:13px;color:var(--faint);letter-spacing:.12em;font-weight:600}
+  .venue{font-size:11px;color:var(--muted);text-align:center}
+  .cd{display:flex;gap:6px;margin-top:14px;font-variant-numeric:tabular-nums}
+  .cd .u{flex:1;text-align:center;background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:10px;padding:9px 0}
+  .cd .u b{display:block;font-size:26px;font-weight:750;letter-spacing:-.01em}
+  .cd .u small{font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+
+  .formpanel{display:flex;align-items:center;justify-content:space-between;padding:13px 15px}
+  .chips{display:flex;gap:6px}.chips i{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:10px;font-weight:800;color:#0a0a0b;font-style:normal}
+  .fW{background:var(--win)}.fD{background:var(--draw)}.fL{background:var(--loss)}
+  .small{font-size:11px;color:var(--muted)}.end{margin-left:auto}
+
+  .result{display:flex;align-items:center;gap:12px;padding:13px 15px}
+  .result .sc{font-size:20px;font-weight:750;font-variant-numeric:tabular-nums}
+  .result .lbl{font-size:11px;color:var(--muted)}
+
+  .tbl{overflow:hidden}
+  .tr{display:grid;grid-template-columns:22px 1fr 26px 18px 32px;align-items:center;gap:8px;padding:10px 14px;font-size:12.5px}
+  .tr+.tr{border-top:1px solid var(--line)}
+  .tr .pos{color:var(--faint);text-align:center;font-variant-numeric:tabular-nums}
+  .tr .pl{color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+  .tr .pts{color:var(--ink);font-weight:650;text-align:center;font-variant-numeric:tabular-nums}
+  .tr.me{background:linear-gradient(90deg,rgba(3,70,148,.34),rgba(3,70,148,.05))}.tr.me .cl{font-weight:700}
+  .arr{font-size:9px}.up{color:var(--win)}.dn{color:var(--loss)}.eq{color:var(--faint)}
+
+  .pad2{padding:4px 15px}
+  .scorer{display:flex;align-items:center;gap:12px;padding:9px 0}
+  .scorer+.scorer{border-top:1px solid var(--line)}
+  .scorer .nm{font-size:13px}.scorer .meta{font-size:10px;color:var(--faint)}
+  .scorer .g{margin-left:auto;font-size:15px;font-weight:750;font-variant-numeric:tabular-nums}
+  .bar{height:4px;border-radius:3px;background:var(--s3);overflow:hidden;margin-top:5px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-bright))}
+
+  .news a{display:block;padding:10px 0;font-size:13px;color:rgba(255,255,255,.82);text-decoration:none}
+  .news a+a{border-top:1px solid var(--line)}
+  .news small{display:block;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:3px}
+
+  .watch{display:flex;align-items:center;justify-content:center;gap:9px;padding:14px;border-radius:13px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:#fff;background:var(--blue);text-decoration:none;border:1px solid rgba(255,255,255,.12)}
+  .live-dot{width:8px;height:8px;border-radius:50%;background:#ff4d4d;display:block}
+
+  @container (min-width:720px){
+    .board{display:grid;gap:16px 18px;padding:20px 22px 26px;grid-template-columns:1.55fr 1fr;
+      grid-template-areas:"bar bar" "hero hero" "form scorers" "result scorers" "table scorers" "table news" "watch watch";align-items:start}
+    .s-bar{grid-area:bar;position:static;margin:0;padding:0 0 4px;background:none}
+    .s-hero{grid-area:hero}.s-form{grid-area:form}.s-result{grid-area:result}
+    .s-table{grid-area:table}.s-scorers{grid-area:scorers}.s-news{grid-area:news}.s-watch{grid-area:watch}
+    .vs{margin:18px 0 10px}.crest.big{width:54px;height:54px}.cd .u b{font-size:30px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media (max-width:520px){body{padding:18px 12px 50px}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="shield" viewBox="0 0 100 112"><path d="M50 4 L92 18 V52 C92 82 72 100 50 108 C28 100 8 82 8 52 V18 Z" fill="none" stroke="#fff" stroke-width="4"/><text x="50" y="64" text-anchor="middle" font-family="sans-serif" font-size="29" font-weight="800" fill="#fff">CFC</text></symbol>
+</svg>
+
+<div class="intro">
+  <h1>Chelsea dashboard · Broadcast Lite (final)</h1>
+  <p>The chosen direction, phone + desktop. Watermark crest, blue hero glow, boxed countdown, form chips, table arrows, hover-lift cards. Crest is a placeholder — chelsea.svg drops in. Sample data.</p>
+</div>
+
+<div class="devices">
+  <div><div class="vp">iPhone · 390px</div>
+    <div class="phone"><div class="notch"></div><div class="screen">
+      <div class="board">
+        <div class="s-bar"><span class="chev">‹</span><span class="wordmark">Chelsea</span><span class="sample">◢ Sample data</span></div>
+        <div class="s-hero"><div class="eyebrow">Next match</div><div class="hero"><svg class="wm"><use href="#shield"/></svg><div class="hrow"><span class="comp">Premier League · MW 1</span></div><div class="vs"><div class="team"><span class="crest big"><svg width="26" height="29"><use href="#shield"/></svg></span><span>Chelsea</span></div><div class="mid"><span class="vstxt">VS</span></div><div class="team"><span class="crest big">A</span><span>Arsenal</span></div></div><div class="venue">Stamford Bridge</div><div class="cd"><div class="u"><b data-d>04</b><small>days</small></div><div class="u"><b data-h>03</b><small>hrs</small></div><div class="u"><b data-m>22</b><small>min</small></div><div class="u"><b data-s>40</b><small>sec</small></div></div></div></div>
+        <div class="s-form"><div class="eyebrow">Recent form</div><div class="panel formpanel"><span class="chips"><i class="fW">W</i><i class="fW">W</i><i class="fD">D</i><i class="fL">L</i><i class="fW">W</i></span><span class="small">Last 5 · 10 pts</span></div></div>
+        <div class="s-result"><div class="eyebrow">Last result</div><div class="panel result"><span class="sc">2–1</span><span class="lbl">v Liverpool (A)</span><span class="chips end"><i class="fW">W</i></span></div></div>
+        <div class="s-table"><div class="eyebrow">League table</div><div class="panel tbl"><div class="tr"><span class="pos">1</span><span class="cl">Man City</span><span class="pl">5</span><span class="arr up">▲</span><span class="pts">13</span></div><div class="tr"><span class="pos">2</span><span class="cl">Arsenal</span><span class="pl">5</span><span class="arr eq">–</span><span class="pts">12</span></div><div class="tr"><span class="pos">3</span><span class="cl">Liverpool</span><span class="pl">5</span><span class="arr dn">▼</span><span class="pts">11</span></div><div class="tr me"><span class="pos">4</span><span class="cl">Chelsea</span><span class="pl">5</span><span class="arr up">▲</span><span class="pts">10</span></div><div class="tr"><span class="pos">5</span><span class="cl">Spurs</span><span class="pl">5</span><span class="arr dn">▼</span><span class="pts">9</span></div></div></div>
+        <div class="s-scorers"><div class="eyebrow">Top scorers</div><div class="panel pad2"><div class="scorer"><span class="crest" style="width:30px;height:30px;font-size:10px">P</span><div style="flex:1;min-width:0"><div class="nm">Palmer</div><div class="meta">Midfield · 12 apps</div><div class="bar"><i style="width:100%"></i></div></div><span class="g">7</span></div><div class="scorer"><span class="crest" style="width:30px;height:30px;font-size:10px">J</span><div style="flex:1;min-width:0"><div class="nm">Jackson</div><div class="meta">Forward · 11 apps</div><div class="bar"><i style="width:71%"></i></div></div><span class="g">5</span></div><div class="scorer"><span class="crest" style="width:30px;height:30px;font-size:10px">M</span><div style="flex:1;min-width:0"><div class="nm">Madueke</div><div class="meta">Winger · 12 apps</div><div class="bar"><i style="width:43%"></i></div></div><span class="g">3</span></div></div></div>
+        <div class="s-news"><div class="eyebrow">Latest news</div><div class="panel news pad2"><a href="#"><small>Sky Sports</small>Maresca confirms rotated XI for midweek tie</a><a href="#"><small>BBC Sport</small>Cole Palmer named Player of the Month</a><a href="#"><small>The Athletic</small>Inside Chelsea's set-piece resurgence</a></div></div>
+        <a class="watch s-watch" href="#"><i class="live-dot"></i>Watch live</a>
+      </div>
+    </div></div>
+  </div>
+  <div><div class="vp">Desktop · web</div>
+    <div class="desk"><div class="winbar"><i></i><i></i><i></i><span>amw-sports-hq.vercel.app/chelsea</span></div><div class="screen">
+      <div class="board">
+        <div class="s-bar"><span class="chev">‹</span><span class="wordmark">Chelsea</span><span class="sample">◢ Sample data</span></div>
+        <div class="s-hero"><div class="eyebrow">Next match</div><div class="hero"><svg class="wm"><use href="#shield"/></svg><div class="hrow"><span class="comp">Premier League · MW 1</span></div><div class="vs"><div class="team"><span class="crest big"><svg width="30" height="33"><use href="#shield"/></svg></span><span>Chelsea</span></div><div class="mid"><span class="vstxt">VS</span></div><div class="team"><span class="crest big">A</span><span>Arsenal</span></div></div><div class="venue">Stamford Bridge</div><div class="cd"><div class="u"><b data-d>04</b><small>days</small></div><div class="u"><b data-h>03</b><small>hrs</small></div><div class="u"><b data-m>22</b><small>min</small></div><div class="u"><b data-s>40</b><small>sec</small></div></div></div></div>
+        <div class="s-form"><div class="eyebrow">Recent form</div><div class="panel formpanel"><span class="chips"><i class="fW">W</i><i class="fW">W</i><i class="fD">D</i><i class="fL">L</i><i class="fW">W</i></span><span class="small">Last 5 · 10 pts</span></div></div>
+        <div class="s-result"><div class="eyebrow">Last result</div><div class="panel result"><span class="sc">2–1</span><span class="lbl">v Liverpool (A)</span><span class="chips end"><i class="fW">W</i></span></div></div>
+        <div class="s-table"><div class="eyebrow">League table</div><div class="panel tbl"><div class="tr"><span class="pos">1</span><span class="cl">Man City</span><span class="pl">5</span><span class="arr up">▲</span><span class="pts">13</span></div><div class="tr"><span class="pos">2</span><span class="cl">Arsenal</span><span class="pl">5</span><span class="arr eq">–</span><span class="pts">12</span></div><div class="tr"><span class="pos">3</span><span class="cl">Liverpool</span><span class="pl">5</span><span class="arr dn">▼</span><span class="pts">11</span></div><div class="tr me"><span class="pos">4</span><span class="cl">Chelsea</span><span class="pl">5</span><span class="arr up">▲</span><span class="pts">10</span></div><div class="tr"><span class="pos">5</span><span class="cl">Spurs</span><span class="pl">5</span><span class="arr dn">▼</span><span class="pts">9</span></div></div></div>
+        <div class="s-scorers"><div class="eyebrow">Top scorers</div><div class="panel pad2"><div class="scorer"><span class="crest" style="width:30px;height:30px;font-size:10px">P</span><div style="flex:1;min-width:0"><div class="nm">Palmer</div><div class="meta">Midfield · 12 apps</div><div class="bar"><i style="width:100%"></i></div></div><span class="g">7</span></div><div class="scorer"><span class="crest" style="width:30px;height:30px;font-size:10px">J</span><div style="flex:1;min-width:0"><div class="nm">Jackson</div><div class="meta">Forward · 11 apps</div><div class="bar"><i style="width:71%"></i></div></div><span class="g">5</span></div><div class="scorer"><span class="crest" style="width:30px;height:30px;font-size:10px">M</span><div style="flex:1;min-width:0"><div class="nm">Madueke</div><div class="meta">Winger · 12 apps</div><div class="bar"><i style="width:43%"></i></div></div><span class="g">3</span></div></div></div>
+        <div class="s-news"><div class="eyebrow">Latest news</div><div class="panel news pad2"><a href="#"><small>Sky Sports</small>Maresca confirms rotated XI for midweek tie</a><a href="#"><small>BBC Sport</small>Cole Palmer named Player of the Month</a><a href="#"><small>The Athletic</small>Inside Chelsea's set-piece resurgence</a></div></div>
+        <a class="watch s-watch" href="#"><i class="live-dot"></i>Watch live</a>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var t=new Date(Date.now()+(4*86400+3*3600+22*60+40)*1000);
+  function p(n){return String(n).padStart(2,"0");}
+  function set(s,v){var e=document.querySelectorAll(s);for(var i=0;i<e.length;i++)e[i].textContent=v;}
+  function tick(){var d=Math.max(0,t-Date.now());var dd=Math.floor(d/864e5);d-=dd*864e5;var hh=Math.floor(d/36e5);d-=hh*36e5;var mm=Math.floor(d/6e4);d-=mm*6e4;var ss=Math.floor(d/1e3);set("[data-d]",p(dd));set("[data-h]",p(hh));set("[data-m]",p(mm));set("[data-s]",p(ss));}
+  tick();setInterval(tick,1000);
+})();
+</script>
