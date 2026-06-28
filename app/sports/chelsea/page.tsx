@@ -1,1 +1,1 @@
-export { default } from "@/components/ChelseaDashboard";
+export { default } from "@/components/chelsea";
