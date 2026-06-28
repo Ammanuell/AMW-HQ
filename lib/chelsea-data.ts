@@ -124,7 +124,9 @@ function mapNextMatch(matches: FdMatch[]): Match | null {
     matchweek: m.matchday != null ? `MW ${m.matchday}` : titleCase(m.stage),
     home: teamRef(m.homeTeam),
     away: teamRef(m.awayTeam),
-    venue: m.venue ?? (m.homeTeam.id === CHELSEA_ID ? "Stamford Bridge" : "Away"),
+    // The free tier omits `venue`, so show an honest Home/Away rather than a
+    // guessed stadium name.
+    venue: m.venue ?? (m.homeTeam.id === CHELSEA_ID ? "Home" : "Away"),
     kickoff: m.utcDate, // absolute instant; Countdown reads it as such
   };
 }
@@ -164,7 +166,6 @@ function mapTable(rows: FdStandingRow[]): TableRow[] {
     pos: r.position,
     team: r.team.shortName ?? r.team.name,
     played: r.playedGames,
-    move: "same", // standings endpoint exposes no week-over-week movement
     points: r.points,
     isChelsea: r.team.id === CHELSEA_ID,
     crest: r.team.crest,
@@ -243,6 +244,6 @@ export async function getChelseaData(): Promise<ChelseaData> {
     recentForm: recentForm.length ? recentForm : SAMPLE_DATA.recentForm,
     table: mappedTable.length ? mappedTable : SAMPLE_DATA.table,
     scorers: mappedScorers.length ? mappedScorers : SAMPLE_DATA.scorers,
-    news: SAMPLE_DATA.news, // static for now — no RSS yet
+    news: SAMPLE_DATA.news, // default; the page overrides this with live RSS (getChelseaNews)
   };
 }

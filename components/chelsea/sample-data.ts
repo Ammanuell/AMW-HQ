@@ -17,11 +17,11 @@ export const SAMPLE_DATA: ChelseaData = {
   recentForm: ["W", "W", "D", "L", "W"],
   lastResult: { score: "2–1", opponent: "Liverpool", ground: "A", result: "W" },
   table: [
-    { pos: 1, team: "Man City", played: 5, move: "up", points: 13 },
-    { pos: 2, team: "Arsenal", played: 5, move: "same", points: 12 },
-    { pos: 3, team: "Liverpool", played: 5, move: "down", points: 11 },
-    { pos: 4, team: "Chelsea", played: 5, move: "up", points: 10, isChelsea: true },
-    { pos: 5, team: "Spurs", played: 5, move: "down", points: 9 },
+    { pos: 1, team: "Man City", played: 5, points: 13 },
+    { pos: 2, team: "Arsenal", played: 5, points: 12 },
+    { pos: 3, team: "Liverpool", played: 5, points: 11 },
+    { pos: 4, team: "Chelsea", played: 5, points: 10, isChelsea: true },
+    { pos: 5, team: "Spurs", played: 5, points: 9 },
   ],
   scorers: [
     { name: "Palmer", role: "Midfield", apps: 12, goals: 7 },

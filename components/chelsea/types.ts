@@ -5,7 +5,6 @@
  */
 
 export type FormResult = "W" | "D" | "L";
-export type Movement = "up" | "down" | "same";
 
 export type TeamRef = {
   name: string;
@@ -37,7 +36,6 @@ export type TableRow = {
   pos: number;
   team: string;
   played: number;
-  move: Movement;
   points: number;
   isChelsea?: boolean;
   /** crest image URL; falls back to an initial roundel */
