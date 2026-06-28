@@ -9,8 +9,10 @@ export type Movement = "up" | "down" | "same";
 
 export type TeamRef = {
   name: string;
-  /** true → render the Chelsea crest; otherwise an initial roundel */
+  /** true → render the local Chelsea crest when no `crest` URL is given */
   chelsea?: boolean;
+  /** crest image URL (e.g. football-data.org); falls back to an initial roundel */
+  crest?: string;
 };
 
 export type Match = {
@@ -38,6 +40,8 @@ export type TableRow = {
   move: Movement;
   points: number;
   isChelsea?: boolean;
+  /** crest image URL; falls back to an initial roundel */
+  crest?: string;
 };
 
 export type Scorer = {

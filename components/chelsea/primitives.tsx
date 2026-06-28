@@ -19,7 +19,11 @@ export function Eyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Chelsea → crest image; any other team → initial roundel. */
+/**
+ * Crest image when a URL is available (remote crest, or the local Chelsea
+ * asset); otherwise an initial roundel. Remote crests come from the data layer
+ * (football-data.org), so no team logos are stored in the app.
+ */
 export function Crest({
   team,
   size,
@@ -29,11 +33,12 @@ export function Crest({
   size: number;
   fontSize: number;
 }) {
-  if (team.chelsea) {
+  const src = team.crest ?? (team.chelsea ? CHELSEA_LOGO : null);
+  if (src) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={CHELSEA_LOGO}
+        src={src}
         alt={team.name}
         className="flex-none object-contain"
         style={{ width: size, height: size }}

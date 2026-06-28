@@ -1,5 +1,5 @@
 import type { Movement, TableRow } from "./types";
-import { Eyebrow, PANEL } from "./primitives";
+import { Crest, Eyebrow, PANEL } from "./primitives";
 
 const ARROW: Record<Movement, { glyph: string; cls: string }> = {
   up: { glyph: "▲", cls: "text-[#22a05a]" },
@@ -25,7 +25,14 @@ export function LeagueTable({ rows }: { rows: TableRow[] }) {
               }`}
             >
               <span className="text-center tabular-nums text-white/[0.26]">{row.pos}</span>
-              <span className={row.isChelsea ? "font-bold" : ""}>{row.team}</span>
+              <span className={`flex min-w-0 items-center gap-2 ${row.isChelsea ? "font-bold" : ""}`}>
+                <Crest
+                  team={{ name: row.team, chelsea: row.isChelsea, crest: row.crest }}
+                  size={18}
+                  fontSize={9}
+                />
+                <span className="truncate">{row.team}</span>
+              </span>
               <span className="text-center tabular-nums text-white/[0.46]">{row.played}</span>
               <span className={`text-[9px] ${arrow.cls}`} aria-hidden>
                 {arrow.glyph}

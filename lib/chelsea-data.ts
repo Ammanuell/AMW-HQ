@@ -27,7 +27,7 @@ const CHELSEA_ID = 61;
 const PL = 2021; // football-data.org competition ID for the Premier League
 
 /** Raw shapes we read off the football-data.org v4 responses (partial). */
-type FdTeam = { id: number; name: string; shortName?: string };
+type FdTeam = { id: number; name: string; shortName?: string; crest?: string };
 type FdMatch = {
   competition: { name: string };
   matchday: number | null;
@@ -81,7 +81,11 @@ function titleCase(stage?: string): string {
 }
 
 function teamRef(team: FdTeam) {
-  return { name: team.shortName ?? team.name, chelsea: team.id === CHELSEA_ID };
+  return {
+    name: team.shortName ?? team.name,
+    chelsea: team.id === CHELSEA_ID,
+    crest: team.crest,
+  };
 }
 
 /** The TOTAL (home+away) standings table, or [] if unavailable. */
@@ -161,6 +165,7 @@ function mapTable(rows: FdStandingRow[]): TableRow[] {
     move: "same", // standings endpoint exposes no week-over-week movement
     points: r.points,
     isChelsea: r.team.id === CHELSEA_ID,
+    crest: r.team.crest,
   });
   const top = rows.slice(0, 5);
   // Always include Chelsea, even if outside the top 5.
