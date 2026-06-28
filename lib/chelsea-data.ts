@@ -50,7 +50,9 @@ type FdStandingsRes = {
   standings: { type: string; table: FdStandingRow[] }[];
 };
 type FdScorer = {
-  player: { name: string; position?: string | null };
+  // The free tier nulls out `position` but populates `section` (e.g.
+  // "Centre-Forward", "Attacking Midfield") — use that for the player role.
+  player: { name: string; position?: string | null; section?: string | null };
   team: FdTeam;
   playedMatches: number;
   goals: number;
@@ -182,7 +184,7 @@ function mapScorers(scorers: FdScorer[]): Scorer[] {
     .slice(0, 4)
     .map((s) => ({
       name: s.player.name,
-      role: s.player.position ?? "—",
+      role: s.player.section ?? s.player.position ?? "—",
       apps: s.playedMatches,
       goals: s.goals,
     }));
