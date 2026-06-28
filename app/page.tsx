@@ -1,1 +1,1 @@
-export { default } from "@/components/ProfileSelector";
+export { default } from "@/components/HubSelector";

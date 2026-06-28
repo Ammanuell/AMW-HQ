@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AMW Sports HQ",
-  description: "Personal sports dashboard — Chelsea FC & SA Spurs",
+  title: "AMW HQ",
+  description: "Personal hub — Sports, Amharic, Fitness",
 };
 
 export default function RootLayout({

@@ -4,7 +4,7 @@ export default function ProfileSelector() {
   return (
     <main className="min-h-screen bg-[#0f0f0f] flex flex-col items-center justify-center gap-16 px-4">
       <div className="text-center">
-        <p className="text-xs tracking-[0.4em] uppercase text-[#666] mb-2">AMW Sports HQ</p>
+        <p className="text-xs tracking-[0.4em] uppercase text-[#666] mb-2">Sports</p>
         <h1 className="text-2xl font-light tracking-widest text-white/80">
           Who are you watching?
         </h1>
@@ -14,7 +14,7 @@ export default function ProfileSelector() {
         <ClubCard
           name="Chelsea FC"
           logo="/logos/chelsea.svg"
-          href="/chelsea"
+          href="/sports/chelsea"
           hoverColor="rgba(3,70,148,0.6)"
           ringFrom="#034694"
           ringTo="#021736"
@@ -26,6 +26,13 @@ export default function ProfileSelector() {
           comingSoon
         />
       </div>
+
+      <Link
+        href="/"
+        className="text-xs tracking-widest uppercase text-white/40 hover:text-white/70 transition-colors"
+      >
+        ← Back
+      </Link>
     </main>
   );
 }

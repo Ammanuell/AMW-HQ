@@ -7,7 +7,7 @@ export default function WatchPage() {
         <p className="text-white/30 text-lg tracking-wide">🚧 Streams coming soon</p>
       </div>
       <Link
-        href="/chelsea"
+        href="/sports/chelsea"
         className="text-xs tracking-widest uppercase text-white/40 hover:text-white/70 transition-colors"
       >
         ← Back to Dashboard
